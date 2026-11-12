@@ -1,7 +1,7 @@
 import { extension_settings, saveSettingsDebounced } from '../../../extensions.js';
 
 const extensionName = 'lighthouse';
-const VERSION = '0.1.0';
+const VERSION = '0.1.1';
 
 // ---------------- 状态 ----------------
 // 中转站数据结构（后续「读密钥 / 代发余额 / 验真」会在这里按需加字段）：
@@ -40,16 +40,25 @@ function escapeHtml(str) {
 }
 
 // ---------------- 面板 ----------------
-function buildMenuButton() {
-    if ($('#st-lighthouse-menu-button').length) return;
+function buildButton() {
+    if ($('#st-lighthouse-button').length) return;
     const btn = $(`
-        <div id="st-lighthouse-menu-button" class="list-group-item flex-container flexGap5 interactable"
-             title="灯塔：API 中转站管理" tabindex="0" role="listitem">
-            <div class="fa-fw fa-solid fa-tower-observation extensionsMenuExtensionButton"></div>
-            <span>灯塔</span>
+        <div id="st-lighthouse-button" class="drawer" title="灯塔：API 中转站管理" tabindex="0" role="button">
+            <div class="drawer-icon fa-solid fa-tower-observation fa-fw closedIcon interactable" title="灯塔"></div>
         </div>`);
     btn.on('click', () => togglePanel());
-    $('#extensionsMenu').append(btn);
+    // 插到顶栏按钮群（AI 配置按钮右边，与 Error/Risveglio 同排）；找不到再逐级回退
+    const anchor = $('#ai-config-button');
+    if (anchor.length) anchor.after(btn);
+    else {
+        const holder = $('#top-settings-holder');
+        if (holder.length) holder.append(btn);
+        else {
+            const menu = $('#extensionsMenu');
+            if (menu.length) menu.append(btn);
+            else $('body').append(btn);
+        }
+    }
 }
 
 function togglePanel(show) {
@@ -189,7 +198,7 @@ function bindPanelEvents() {
 // ---------------- 挂载 ----------------
 jQuery(async () => {
     loadSettings();
-    buildMenuButton();
+    buildButton();
     buildPanel();
 });
 
