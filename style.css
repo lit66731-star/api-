@@ -1,0 +1,165 @@
+/* ============ 灯塔 · API 中转站管理 ============ */
+#st-lighthouse {
+    --lh-bg: #0d1220;
+    --lh-surface: #141b2e;
+    --lh-surface-2: #1b2440;
+    --lh-text: #e9eef7;
+    --lh-text-soft: #8794ad;
+    --lh-border: rgba(255, 255, 255, 0.08);
+    --lh-accent: #ffd27d;
+    --lh-accent-strong: #ffc14d;
+    --lh-accent-ink: #241a06;
+    --lh-danger: #ff7a7a;
+
+    position: fixed;
+    inset: 0;
+    z-index: 20000;
+    background: var(--lh-bg);
+    color: var(--lh-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100dvh;
+    box-sizing: border-box;
+}
+#st-lighthouse, #st-lighthouse * { text-shadow: none !important; box-sizing: border-box; }
+
+/* 顶栏 */
+#st-lighthouse .lh__head {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px 14px;
+    border-bottom: 1px solid var(--lh-border);
+}
+#st-lighthouse .lh__head-titles { display: flex; align-items: baseline; gap: 10px; }
+#st-lighthouse .lh__title {
+    font-family: Georgia, "Songti SC", "SimSun", serif;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--lh-accent);
+}
+#st-lighthouse .lh__subtitle { font-size: 14px; color: var(--lh-text-soft); }
+#st-lighthouse .lh__version { font-size: 12px; color: var(--lh-text-soft); }
+#st-lighthouse .lh__close {
+    background: none; border: none; cursor: pointer;
+    font-size: 26px; line-height: 1; color: var(--lh-text-soft);
+    padding: 4px 8px;
+}
+#st-lighthouse .lh__close:hover { color: var(--lh-text); }
+
+/* 内容区 */
+#st-lighthouse .lh__body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 20px 24px 40px;
+    width: 100%;
+}
+#st-lighthouse .lh__body > * { max-width: 680px; margin-left: auto; margin-right: auto; }
+
+#st-lighthouse .lh__section { margin-bottom: 28px; }
+#st-lighthouse .lh__label {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--lh-text);
+}
+#st-lighthouse .lh__hint {
+    font-size: 12.5px;
+    color: var(--lh-text-soft);
+    line-height: 1.6;
+    margin-bottom: 12px;
+}
+
+/* 列表 */
+#st-lighthouse .lh__list { display: flex; flex-direction: column; gap: 8px; }
+#st-lighthouse .lh__empty {
+    padding: 20px;
+    text-align: center;
+    color: var(--lh-text-soft);
+    border: 1px dashed var(--lh-border);
+    border-radius: 10px;
+    font-size: 13px;
+}
+#st-lighthouse .lh__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--lh-surface);
+    border: 1px solid var(--lh-border);
+    border-radius: 10px;
+}
+#st-lighthouse .lh__row-main { min-width: 0; flex: 1 1 auto; }
+#st-lighthouse .lh__row-name { font-size: 14px; font-weight: 600; }
+#st-lighthouse .lh__row-url {
+    font-size: 12.5px;
+    color: var(--lh-text-soft);
+    word-break: break-all;
+    margin-top: 2px;
+}
+#st-lighthouse .lh__row-note {
+    font-size: 12px;
+    color: var(--lh-text-soft);
+    opacity: 0.85;
+    margin-top: 4px;
+    white-space: pre-wrap;
+}
+#st-lighthouse .lh__row-actions { flex: 0 0 auto; display: flex; gap: 6px; }
+
+/* 添加表单 */
+#st-lighthouse .lh__add {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px;
+    background: var(--lh-surface);
+    border: 1px solid var(--lh-border);
+    border-radius: 10px;
+}
+#st-lighthouse .lh__add input {
+    background: var(--lh-surface-2);
+    border: 1px solid var(--lh-border);
+    border-radius: 8px;
+    color: var(--lh-text);
+    padding: 9px 12px;
+    font-size: 13.5px;
+    outline: none;
+    font-family: inherit;
+}
+#st-lighthouse .lh__add input::placeholder { color: var(--lh-text-soft); opacity: 0.7; }
+#st-lighthouse .lh__add input:focus { border-color: var(--lh-accent); }
+#st-lighthouse .lh__add-btns { display: flex; gap: 8px; }
+
+/* 按钮 */
+#st-lighthouse .lh__btn {
+    background: transparent;
+    border: 1px solid var(--lh-border);
+    border-radius: 8px;
+    color: var(--lh-text);
+    cursor: pointer;
+    font-size: 13px;
+    padding: 7px 14px;
+    font-family: inherit;
+}
+#st-lighthouse .lh__btn:hover { border-color: var(--lh-accent); color: var(--lh-accent); }
+#st-lighthouse .lh__btn--primary {
+    background: var(--lh-accent);
+    border-color: var(--lh-accent);
+    color: var(--lh-accent-ink);
+    font-weight: 600;
+}
+#st-lighthouse .lh__btn--primary:hover { background: var(--lh-accent-strong); border-color: var(--lh-accent-strong); color: var(--lh-accent-ink); }
+#st-lighthouse .lh__row-del:hover { border-color: var(--lh-danger); color: var(--lh-danger); }
+
+/* 手机窄屏 */
+@media (max-width: 480px) {
+    #st-lighthouse .lh__head { padding: 14px 16px 12px; }
+    #st-lighthouse .lh__body { padding: 16px 16px 32px; }
+    #st-lighthouse .lh__row { flex-direction: column; align-items: stretch; }
+    #st-lighthouse .lh__row-actions { justify-content: flex-end; }
+}
