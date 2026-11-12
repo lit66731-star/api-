@@ -15,7 +15,7 @@ SillyTavern 扩展：**API 中转站管理**。统一维护你用的中转站列
 
 ## 安装
 
-把本目录放进 SillyTavern 的 `public/scripts/extensions/third-party/lighthouse/`，刷新后输入框正上方会出现一个「灯塔」按钮，点它打开面板。
+把本目录放进 SillyTavern 的 `public/scripts/extensions/third-party/lighthouse/`，刷新后点酒馆的「扩展程序」（魔杖）图标，弹出的菜单里会多一个「灯塔」项（和 Serendipity 同位置），点它打开面板。
 
 ## 结构
 

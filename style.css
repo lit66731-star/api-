@@ -1,22 +1,4 @@
 /* ============ 灯塔 · API 中转站管理 ============ */
-/* 输入框上方的入口按钮（在 #qr--bar 那一排里） */
-#st-lighthouse-button {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 5px 11px;
-    border-radius: 8px;
-    font-size: 13px;
-    line-height: 1;
-    cursor: pointer;
-    user-select: none;
-    white-space: nowrap;
-    color: inherit;
-    border: 1px solid rgba(128, 128, 128, 0.35);
-    background: rgba(128, 128, 128, 0.12);
-}
-#st-lighthouse-button:hover { background: rgba(128, 128, 128, 0.24); }
-#st-lighthouse-button i { color: #e8a33d; }
 #st-lighthouse {
     --lh-bg: #0d1220;
     --lh-surface: #141b2e;

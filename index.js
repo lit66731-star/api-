@@ -1,7 +1,7 @@
 import { extension_settings, saveSettingsDebounced } from '../../../extensions.js';
 
 const extensionName = 'lighthouse';
-const VERSION = '0.1.2';
+const VERSION = '0.1.3';
 
 // ---------------- 状态 ----------------
 // 中转站数据结构（后续「读密钥 / 代发余额 / 验真」会在这里按需加字段）：
@@ -40,37 +40,17 @@ function escapeHtml(str) {
 }
 
 // ---------------- 面板 ----------------
-function placeButton(btn) {
-    // 首选：输入框正上方 #qr--bar 那一排（quick-reply 栏）；找不到再逐级回退
-    const bar = $('#qr--bar');
-    if (bar.length) { bar.prepend(btn); return; }
-    const anchor = $('#ai-config-button');
-    if (anchor.length) { anchor.after(btn); return; }
-    const holder = $('#top-settings-holder');
-    if (holder.length) { holder.append(btn); return; }
-    const menu = $('#extensionsMenu');
-    if (menu.length) { menu.append(btn); return; }
-    $('body').append(btn);
-}
-
-function buildButton() {
-    if ($('#st-lighthouse-button').length) return;
+// 入口挂到酒馆「扩展」菜单（#extensionsMenu，即魔杖菜单），与 Serendipity 同位置
+function buildMenuButton() {
+    if ($('#st-lighthouse-menu-button').length) return;
     const btn = $(`
-        <div id="st-lighthouse-button" title="灯塔：API 中转站管理" tabindex="0" role="button">
-            <i class="fa-solid fa-tower-observation fa-fw"></i><span>灯塔</span>
+        <div id="st-lighthouse-menu-button" class="list-group-item flex-container flexGap5 interactable"
+             title="灯塔：API 中转站管理" tabindex="0" role="listitem">
+            <div class="fa-fw fa-solid fa-tower-observation extensionsMenuExtensionButton"></div>
+            <span>灯塔</span>
         </div>`);
     btn.on('click', () => togglePanel());
-    placeButton(btn);
-    // quick-reply 栏刷新时会 .empty() 重建，把按钮清掉；监听后若按钮不见了就放回去
-    const bar = $('#qr--bar')[0];
-    if (bar) {
-        new MutationObserver(() => {
-            if (!$('#st-lighthouse-button').length) {
-                const b = $('#qr--bar');
-                if (b.length) b.prepend(btn);
-            }
-        }).observe(bar, { childList: true });
-    }
+    $('#extensionsMenu').append(btn);
 }
 
 function togglePanel(show) {
@@ -210,7 +190,7 @@ function bindPanelEvents() {
 // ---------------- 挂载 ----------------
 jQuery(async () => {
     loadSettings();
-    buildButton();
+    buildMenuButton();
     buildPanel();
 });
 
