@@ -1,8 +1,9 @@
 import { extension_settings } from '../../../extensions.js';
 import { saveSettingsDebounced } from '../../../../script.js';
+import { oai_settings, chat_completion_sources } from '../../../openai.js';
 
 const extensionName = 'lighthouse';
-const VERSION = '0.2.1';
+const VERSION = '0.3.0';
 
 // ---------------- 状态 ----------------
 // 中转站数据结构（后续「读密钥 / 代发余额 / 验真」会在这里按需加字段）：
@@ -12,7 +13,7 @@ const VERSION = '0.2.1';
 //   category 分类（如 公益站 / 付费）
 //   note     备注
 function freshSettings() {
-    return { stations: [] };
+    return { stations: [], activeId: '' };
 }
 let settings = freshSettings();
 
@@ -33,6 +34,7 @@ function loadSettings() {
             category: typeof st.category === 'string' ? st.category : '',
             note: typeof st.note === 'string' ? st.note : '',
         }));
+    if (typeof s.activeId !== 'string') s.activeId = '';
     settings = s;
 }
 
@@ -61,6 +63,27 @@ function togglePanel(show) {
     if (show == null) show = !panel.is(':visible');
     if (show) { renderPanel(); panel.show(); } else { panel.hide(); }
     document.body.classList.toggle('lighthouse-open', show);
+}
+
+// 切换：把酒馆 API 连接指到指定中转站（OpenAI 兼容的 Custom 端点），不动其它设置
+function applyStation(st) {
+    if (!st.baseUrl) { toastr.warning('这个中转站还没填 Base URL'); return; }
+    const src = $('#chat_completion_source');
+    const url = $('#custom_api_url_text');
+    if (src.length && url.length) {
+        // 走 ST 自己的处理器：先填自定义 URL，再切到 Custom 源触发重连 + 刷新模型列表
+        url.val(st.baseUrl).trigger('input');
+        src.val(chat_completion_sources.CUSTOM).trigger('change');
+    } else {
+        // 兜底：直接写 oai_settings
+        oai_settings.custom_url = st.baseUrl;
+        oai_settings.chat_completion_source = chat_completion_sources.CUSTOM;
+        saveSettingsDebounced();
+    }
+    settings.activeId = st.id;
+    saveSettings();
+    renderPanel();
+    toastr.success(`已切换到「${st.name || st.baseUrl}」`);
 }
 
 function buildPanel() {
@@ -102,14 +125,16 @@ function buildPanel() {
 }
 
 function stationRow(st) {
+    const active = st.id === settings.activeId;
     return $(`
-      <div class="lh__row" data-id="${escapeHtml(st.id)}">
+      <div class="lh__row${active ? ' is-active' : ''}" data-id="${escapeHtml(st.id)}">
         <div class="lh__row-main">
           <div class="lh__row-name">${escapeHtml(st.name || '（未命名）')}</div>
           <div class="lh__row-url">${escapeHtml(st.baseUrl || '—')}</div>
           ${st.note ? `<div class="lh__row-note">${escapeHtml(st.note)}</div>` : ''}
         </div>
         <div class="lh__row-actions">
+          <button type="button" class="lh__btn lh__btn--primary lh__row-switch" title="切换酒馆连接到这个中转站">${active ? '使用中' : '切换'}</button>
           <button type="button" class="lh__btn lh__row-edit" title="编辑">编辑</button>
           <button type="button" class="lh__btn lh__row-del" title="删除">删除</button>
         </div>
@@ -219,6 +244,13 @@ function bindPanelEvents() {
         if (editingId === id) resetAddForm();
         saveSettings();
         renderPanel();
+    });
+
+    panel.find('.lh__list').on('click', '.lh__row-switch', function () {
+        const id = $(this).closest('.lh__row').attr('data-id');
+        const st = settings.stations.find(x => x.id === id);
+        if (!st) return;
+        applyStation(st);
     });
 }
 
