@@ -2,14 +2,15 @@ import { extension_settings } from '../../../extensions.js';
 import { saveSettingsDebounced } from '../../../../script.js';
 
 const extensionName = 'lighthouse';
-const VERSION = '0.1.4';
+const VERSION = '0.2.0';
 
 // ---------------- 状态 ----------------
 // 中转站数据结构（后续「读密钥 / 代发余额 / 验真」会在这里按需加字段）：
-//   id      唯一标识
-//   name    显示名
-//   baseUrl 中转站 Base URL
-//   note    备注
+//   id       唯一标识
+//   name     显示名
+//   baseUrl  中转站 Base URL
+//   category 分类（如 公益站 / 付费）
+//   note     备注
 function freshSettings() {
     return { stations: [] };
 }
@@ -29,6 +30,7 @@ function loadSettings() {
             id: typeof st.id === 'string' ? st.id : uid(),
             name: typeof st.name === 'string' ? st.name : '',
             baseUrl: typeof st.baseUrl === 'string' ? st.baseUrl : '',
+            category: typeof st.category === 'string' ? st.category : '',
             note: typeof st.note === 'string' ? st.note : '',
         }));
     settings = s;
@@ -84,12 +86,14 @@ function buildPanel() {
           <div class="lh__add">
             <input type="text" class="lh__add-name" placeholder="名称，如 某某中转" autocomplete="off">
             <input type="text" class="lh__add-url" placeholder="Base URL，如 https://api.xxx.com" autocomplete="off">
+            <input type="text" class="lh__add-cat" placeholder="分类（可选），如 公益站 / 付费" autocomplete="off" list="lh__cat-list">
             <input type="text" class="lh__add-note" placeholder="备注（可选）" autocomplete="off">
             <div class="lh__add-btns">
               <button type="button" class="lh__btn lh__btn--primary lh__add-save">添加</button>
               <button type="button" class="lh__btn lh__add-cancel" style="display:none">取消编辑</button>
             </div>
           </div>
+          <datalist id="lh__cat-list"></datalist>
         </div>
       </div>
     </div>`;
@@ -97,29 +101,56 @@ function buildPanel() {
     bindPanelEvents();
 }
 
+function stationRow(st) {
+    return $(`
+      <div class="lh__row" data-id="${escapeHtml(st.id)}">
+        <div class="lh__row-main">
+          <div class="lh__row-name">${escapeHtml(st.name || '（未命名）')}</div>
+          <div class="lh__row-url">${escapeHtml(st.baseUrl || '—')}</div>
+          ${st.note ? `<div class="lh__row-note">${escapeHtml(st.note)}</div>` : ''}
+        </div>
+        <div class="lh__row-actions">
+          <button type="button" class="lh__btn lh__row-edit" title="编辑">编辑</button>
+          <button type="button" class="lh__btn lh__row-del" title="删除">删除</button>
+        </div>
+      </div>`);
+}
+
+function syncCatDatalist() {
+    const dl = $('#lh__cat-list');
+    if (!dl.length) return;
+    const cats = [];
+    for (const st of settings.stations) {
+        const c = String(st.category || '').trim();
+        if (c && !cats.includes(c)) cats.push(c);
+    }
+    dl.empty();
+    cats.forEach(c => dl.append(`<option value="${escapeHtml(c)}"></option>`));
+}
+
 function renderPanel() {
     const panel = $('#st-lighthouse');
     if (!panel.length) return;
     const list = panel.find('.lh__list').empty();
+    syncCatDatalist();
     if (!settings.stations.length) {
         list.append(`<div class="lh__empty">还没有中转站，先在上面添加一个。</div>`);
         return;
     }
-    settings.stations.forEach(st => {
-        const row = $(`
-          <div class="lh__row" data-id="${escapeHtml(st.id)}">
-            <div class="lh__row-main">
-              <div class="lh__row-name">${escapeHtml(st.name || '（未命名）')}</div>
-              <div class="lh__row-url">${escapeHtml(st.baseUrl || '—')}</div>
-              ${st.note ? `<div class="lh__row-note">${escapeHtml(st.note)}</div>` : ''}
-            </div>
-            <div class="lh__row-actions">
-              <button type="button" class="lh__btn lh__row-edit" title="编辑">编辑</button>
-              <button type="button" class="lh__btn lh__row-del" title="删除">删除</button>
-            </div>
-          </div>`);
-        list.append(row);
-    });
+    // 按分类分组，保持分类首次出现的顺序；未分类（空分类）放最后
+    const groups = [];
+    for (const st of settings.stations) {
+        const cat = String(st.category || '').trim();
+        let g = groups.find(x => x.name === cat);
+        if (!g) { g = { name: cat, items: [] }; groups.push(g); }
+        g.items.push(st);
+    }
+    const emptyIdx = groups.findIndex(g => g.name === '');
+    if (emptyIdx > -1) groups.push(groups.splice(emptyIdx, 1)[0]);
+    for (const g of groups) {
+        if (g.name) list.append(`<div class="lh__group-head">${escapeHtml(g.name)}</div>`);
+        g.items.forEach(st => list.append(stationRow(st)));
+    }
 }
 
 let editingId = null;
@@ -129,6 +160,7 @@ function resetAddForm() {
     const panel = $('#st-lighthouse');
     panel.find('.lh__add-name').val('');
     panel.find('.lh__add-url').val('');
+    panel.find('.lh__add-cat').val('');
     panel.find('.lh__add-note').val('');
     panel.find('.lh__add-save').text('添加');
     panel.find('.lh__add-cancel').hide();
@@ -142,13 +174,14 @@ function bindPanelEvents() {
     panel.find('.lh__add-save').on('click', () => {
         const name = String(panel.find('.lh__add-name').val() ?? '').trim();
         const baseUrl = String(panel.find('.lh__add-url').val() ?? '').trim();
+        const category = String(panel.find('.lh__add-cat').val() ?? '').trim();
         const note = String(panel.find('.lh__add-note').val() ?? '').trim();
         if (!name && !baseUrl) { toastr.warning('名称和 Base URL 至少填一个'); return; }
         if (editingId) {
             const st = settings.stations.find(x => x.id === editingId);
-            if (st) { st.name = name; st.baseUrl = baseUrl; st.note = note; }
+            if (st) { st.name = name; st.baseUrl = baseUrl; st.category = category; st.note = note; }
         } else {
-            settings.stations.push({ id: uid(), name, baseUrl, note });
+            settings.stations.push({ id: uid(), name, baseUrl, category, note });
         }
         saveSettings();
         resetAddForm();
@@ -158,7 +191,7 @@ function bindPanelEvents() {
     panel.find('.lh__add-cancel').on('click', resetAddForm);
 
     // 回车提交
-    for (const cls of ['.lh__add-name', '.lh__add-url', '.lh__add-note']) {
+    for (const cls of ['.lh__add-name', '.lh__add-url', '.lh__add-cat', '.lh__add-note']) {
         panel.find(cls).on('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); panel.find('.lh__add-save').trigger('click'); } });
     }
 
@@ -170,6 +203,7 @@ function bindPanelEvents() {
         editingId = id;
         panel.find('.lh__add-name').val(st.name);
         panel.find('.lh__add-url').val(st.baseUrl);
+        panel.find('.lh__add-cat').val(st.category || '');
         panel.find('.lh__add-note').val(st.note);
         panel.find('.lh__add-save').text('保存');
         panel.find('.lh__add-cancel').show();
