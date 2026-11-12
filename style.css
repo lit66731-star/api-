@@ -1,15 +1,15 @@
-/* ============ 灯塔 · API 中转站管理 ============ */
+/* ============ 灯塔 · API 中转站管理（可爱风） ============ */
 #st-lighthouse {
-    --lh-bg: #0d1220;
-    --lh-surface: #141b2e;
-    --lh-surface-2: #1b2440;
-    --lh-text: #e9eef7;
-    --lh-text-soft: #8794ad;
-    --lh-border: rgba(255, 255, 255, 0.08);
-    --lh-accent: #ffd27d;
-    --lh-accent-strong: #ffc14d;
-    --lh-accent-ink: #241a06;
-    --lh-danger: #ff7a7a;
+    --lh-bg: #fff3f6;
+    --lh-surface: #ffffff;
+    --lh-surface-2: #ffeef3;
+    --lh-text: #513e46;
+    --lh-text-soft: #c294a2;
+    --lh-border: #ffd9e3;
+    --lh-accent: #ff8fae;
+    --lh-accent-strong: #ff6d99;
+    --lh-accent-ink: #ffffff;
+    --lh-danger: #ff6b81;
 
     position: fixed;
     inset: 0;
@@ -33,23 +33,27 @@
     justify-content: space-between;
     padding: 18px 24px 14px;
     border-bottom: 1px solid var(--lh-border);
+    background: linear-gradient(180deg, #fff8fa, #fff3f6);
 }
 #st-lighthouse .lh__head-titles { display: flex; align-items: baseline; gap: 10px; }
 #st-lighthouse .lh__title {
-    font-family: Georgia, "Songti SC", "SimSun", serif;
     font-size: 22px;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.02em;
-    color: var(--lh-accent);
+    color: var(--lh-accent-strong);
 }
+#st-lighthouse .lh__title::before { content: "🌸 "; font-size: 0.9em; }
 #st-lighthouse .lh__subtitle { font-size: 14px; color: var(--lh-text-soft); }
-#st-lighthouse .lh__version { font-size: 12px; color: var(--lh-text-soft); }
+#st-lighthouse .lh__version {
+    font-size: 11px; color: var(--lh-accent-strong);
+    background: var(--lh-surface-2); padding: 2px 9px; border-radius: 999px;
+}
 #st-lighthouse .lh__close {
     background: none; border: none; cursor: pointer;
     font-size: 26px; line-height: 1; color: var(--lh-text-soft);
-    padding: 4px 8px;
+    padding: 4px 10px; border-radius: 999px;
 }
-#st-lighthouse .lh__close:hover { color: var(--lh-text); }
+#st-lighthouse .lh__close:hover { color: var(--lh-accent-strong); background: var(--lh-surface-2); }
 
 /* 内容区 */
 #st-lighthouse .lh__body {
@@ -63,7 +67,7 @@
 #st-lighthouse .lh__section { margin-bottom: 28px; }
 #st-lighthouse .lh__label {
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: 8px;
     color: var(--lh-text);
 }
@@ -78,32 +82,37 @@
 #st-lighthouse .lh__list { display: flex; flex-direction: column; gap: 8px; }
 #st-lighthouse .lh__group-head {
     font-size: 12.5px;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.03em;
-    color: var(--lh-accent);
+    color: var(--lh-accent-strong);
     margin-top: 10px;
-    padding: 2px 2px 4px;
+    padding: 3px 12px;
+    background: var(--lh-surface-2);
+    border-radius: 999px;
+    align-self: flex-start;
 }
 #st-lighthouse .lh__empty {
-    padding: 20px;
+    padding: 24px;
     text-align: center;
     color: var(--lh-text-soft);
-    border: 1px dashed var(--lh-border);
-    border-radius: 10px;
+    border: 1.5px dashed var(--lh-border);
+    border-radius: 16px;
     font-size: 13px;
+    background: var(--lh-surface);
 }
 #st-lighthouse .lh__row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 12px 14px;
+    padding: 13px 16px;
     background: var(--lh-surface);
     border: 1px solid var(--lh-border);
-    border-radius: 10px;
+    border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(255, 143, 174, 0.10);
 }
 #st-lighthouse .lh__row-main { min-width: 0; flex: 1 1 auto; }
-#st-lighthouse .lh__row-name { font-size: 14px; font-weight: 600; }
+#st-lighthouse .lh__row-name { font-size: 14.5px; font-weight: 700; }
 #st-lighthouse .lh__row-url {
     font-size: 12.5px;
     color: var(--lh-text-soft);
@@ -113,7 +122,7 @@
 #st-lighthouse .lh__row-note {
     font-size: 12px;
     color: var(--lh-text-soft);
-    opacity: 0.85;
+    opacity: 0.9;
     margin-top: 4px;
     white-space: pre-wrap;
 }
@@ -127,42 +136,43 @@
     padding: 14px;
     background: var(--lh-surface);
     border: 1px solid var(--lh-border);
-    border-radius: 10px;
+    border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(255, 143, 174, 0.08);
 }
 #st-lighthouse .lh__add input {
     background: var(--lh-surface-2);
     border: 1px solid var(--lh-border);
-    border-radius: 8px;
+    border-radius: 12px;
     color: var(--lh-text);
-    padding: 9px 12px;
+    padding: 10px 13px;
     font-size: 13.5px;
     outline: none;
     font-family: inherit;
 }
-#st-lighthouse .lh__add input::placeholder { color: var(--lh-text-soft); opacity: 0.7; }
-#st-lighthouse .lh__add input:focus { border-color: var(--lh-accent); }
+#st-lighthouse .lh__add input::placeholder { color: var(--lh-text-soft); opacity: 0.8; }
+#st-lighthouse .lh__add input:focus { border-color: var(--lh-accent); box-shadow: 0 0 0 3px rgba(255, 143, 174, 0.15); }
 #st-lighthouse .lh__add-btns { display: flex; gap: 8px; }
 
 /* 按钮 */
 #st-lighthouse .lh__btn {
-    background: transparent;
+    background: var(--lh-surface-2);
     border: 1px solid var(--lh-border);
-    border-radius: 8px;
+    border-radius: 999px;
     color: var(--lh-text);
     cursor: pointer;
     font-size: 13px;
-    padding: 7px 14px;
+    padding: 7px 15px;
     font-family: inherit;
 }
-#st-lighthouse .lh__btn:hover { border-color: var(--lh-accent); color: var(--lh-accent); }
+#st-lighthouse .lh__btn:hover { border-color: var(--lh-accent); color: var(--lh-accent-strong); background: #fff; }
 #st-lighthouse .lh__btn--primary {
-    background: var(--lh-accent);
-    border-color: var(--lh-accent);
+    background: linear-gradient(135deg, var(--lh-accent), var(--lh-accent-strong));
+    border-color: transparent;
     color: var(--lh-accent-ink);
-    font-weight: 600;
+    font-weight: 700;
 }
-#st-lighthouse .lh__btn--primary:hover { background: var(--lh-accent-strong); border-color: var(--lh-accent-strong); color: var(--lh-accent-ink); }
-#st-lighthouse .lh__row-del:hover { border-color: var(--lh-danger); color: var(--lh-danger); }
+#st-lighthouse .lh__btn--primary:hover { filter: brightness(1.05); color: var(--lh-accent-ink); }
+#st-lighthouse .lh__row-del:hover { border-color: var(--lh-danger); color: var(--lh-danger); background: #fff0f2; }
 
 /* 手机窄屏 */
 @media (max-width: 480px) {

@@ -23,4 +23,4 @@ SillyTavern 扩展：**API 中转站管理**。统一维护你用的中转站列
 
 - `manifest.json` —— 扩展清单（name = `lighthouse`）
 - `index.js` —— 前端面板逻辑
-- `style.css` —— 面板样式（深夜 + 灯塔光束配色）
+- `style.css` —— 面板样式（粉白蜜桃可爱风）

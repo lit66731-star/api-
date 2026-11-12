@@ -3,7 +3,7 @@
     "display_name": "灯塔",
     "description": "API 中转站管理：统一维护中转站列表；后续可读密钥、代发余额/模型请求、验真防模型偷换。",
     "author": "cc_test",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "loading_order": 100,
     "requires": [],
     "optional": [],

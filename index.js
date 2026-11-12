@@ -2,7 +2,7 @@ import { extension_settings } from '../../../extensions.js';
 import { saveSettingsDebounced } from '../../../../script.js';
 
 const extensionName = 'lighthouse';
-const VERSION = '0.2.0';
+const VERSION = '0.2.1';
 
 // ---------------- 状态 ----------------
 // 中转站数据结构（后续「读密钥 / 代发余额 / 验真」会在这里按需加字段）：
